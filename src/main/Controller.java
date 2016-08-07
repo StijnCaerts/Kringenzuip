@@ -9,19 +9,25 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
+import java.io.File;
 import java.util.Optional;
 
 public class Controller {
 
     @FXML private GridPane gridPane;
+    @FXML
+    private Pane pane;
     private int row = 0;
 
-    @FXML protected void handleKringToevoegen(ActionEvent event) {
+    @FXML
+    protected void handleKringToevoegen(ActionEvent event) {
         // Create the custom dialog.
         Dialog<Pair<String, Color>> dialog = new Dialog<>();
         dialog.setTitle("Kring toevoegen");
@@ -84,6 +90,19 @@ public class Controller {
     @FXML
     protected void handleSluiten(ActionEvent event) {
         Platform.exit();
+    }
+
+    @FXML
+    protected void handleExporteren(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Exporteren naar CSV");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Kommagescheiden waarden", "*.csv"));
+        Stage stage = (Stage) pane.getScene().getWindow();
+        File selectedFile = fileChooser.showSaveDialog(stage);
+        if (selectedFile != null) {
+            // write to file
+            System.out.println(selectedFile.getName());
+        }
     }
 
     private void kringToevoegen(String naam, Color kleur) {
