@@ -6,10 +6,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -64,14 +60,12 @@ public class Controller {
         loginButton.setDisable(true);
 
         // Do some validation (using the Java 8 lambda syntax).
-        kring.textProperty().addListener((observable, oldValue, newValue) -> {
-            loginButton.setDisable(newValue.trim().isEmpty());
-        });
+        kring.textProperty().addListener((observable, oldValue, newValue) -> loginButton.setDisable(newValue.trim().isEmpty()));
 
         dialog.getDialogPane().setContent(grid);
 
         // Request focus on the kring field by default.
-        Platform.runLater(() -> kring.requestFocus());
+        Platform.runLater(kring::requestFocus);
 
         // Convert the result to a kring-kleur-pair when the button is clicked.
         dialog.setResultConverter(dialogButton -> {
@@ -82,9 +76,7 @@ public class Controller {
         });
 
         Optional<Pair<String, Color>> result = dialog.showAndWait();
-        result.ifPresent(kringKleur -> {
-            kringToevoegen(kringKleur.getKey(), kringKleur.getValue());
-        });
+        result.ifPresent(kringKleur -> kringToevoegen(kringKleur.getKey(), kringKleur.getValue()));
 
     }
 
@@ -121,5 +113,5 @@ public class Controller {
         row++;
     }
 
-    int row = 0;
+    private int row = 0;
 }

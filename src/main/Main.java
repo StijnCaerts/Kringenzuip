@@ -8,7 +8,6 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.util.HashSet;
-import java.util.LinkedList;
 
 public class Main extends Application {
 
@@ -18,13 +17,13 @@ public class Main extends Application {
         Scene scene = new Scene(root);
 
         primaryStage.setTitle("Kringenzuip");
-        primaryStage.getIcons().add(new Image("file:flat_beer.png"));
+        primaryStage.getIcons().add(new Image(this.getClass().getResource("/media/flat_beer.png").toString()));
 
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
-    public static HashSet<Kring> getKringen() {
+    static HashSet<Kring> getKringen() {
         return kringen;
     }
 
