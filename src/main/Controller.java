@@ -19,6 +19,7 @@ import java.util.Optional;
 public class Controller {
 
     @FXML private GridPane gridPane;
+    private int row = 0;
 
     @FXML protected void handleKringToevoegen(ActionEvent event) {
         // Create the custom dialog.
@@ -80,6 +81,11 @@ public class Controller {
 
     }
 
+    @FXML
+    protected void handleSluiten(ActionEvent event) {
+        Platform.exit();
+    }
+
     private void kringToevoegen(String naam, Color kleur) {
         // Maak een nieuwe Kring aan
         Kring kring = new Kring(naam, kleur);
@@ -112,6 +118,4 @@ public class Controller {
 
         row++;
     }
-
-    private int row = 0;
 }
