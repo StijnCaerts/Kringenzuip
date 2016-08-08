@@ -16,10 +16,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.Optional;
 
 public class Controller {
@@ -112,7 +109,7 @@ public class Controller {
             PrintWriter writer;
             try {
                 writer = new PrintWriter(selectedFile, "UTF-8");
-                writer.println("kring,kleur,aantal");
+                writer.println("kring\tkleur\taantal");
                 for (Kring kring : Main.getKringen()) {
                     writer.println(kring.toString());
                 }
@@ -133,11 +130,60 @@ public class Controller {
         }
     }
 
+    @FXML
+    protected void handleImporteren(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("CSV importeren");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Kommagescheiden waarden", "*.csv"));
+        Stage stage = (Stage) pane.getScene().getWindow();
+        File selectedFile = fileChooser.showOpenDialog(stage);
+        if (selectedFile != null) {
+            BufferedReader reader;
+            try {
+                reader = new BufferedReader(new FileReader(selectedFile));
+                String header = reader.readLine();
+                if (!header.equals("kring\tkleur\taantal")) {
+                    throw new IllegalArgumentException();
+                } else {
+                    String line;
+                    String[] array;
+                    while ((line = reader.readLine()) != null) {
+                        array = line.split("\t");
+                        if (array.length != 3) throw new IllegalArgumentException();
+                        String naam = array[0];
+                        Color kleur = Color.web(array[1]);
+                        int aantal = Integer.parseInt(array[2]);
+                        kringToevoegen(naam, kleur, aantal);
+                    }
+                }
+            } catch (IOException | IllegalArgumentException e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                if (e.getClass() == IllegalArgumentException.class) {
+                    // bestand voldoet niet aan de verwachte indeling.
+                    System.out.println("kaka");
+                }
+                alert.show();
+            }
+        }
+    }
+
     private void kringToevoegen(String naam, Color kleur) {
         // Maak een nieuwe Kring aan
         Kring kring = new Kring(naam, kleur);
         Main.getKringen().add(kring);
 
+        weergaveKringToevoegen(kring);
+    }
+
+    private void kringToevoegen(String naam, Color kleur, int aantal) {
+        // Maak een nieuwe Kring aan
+        Kring kring = new Kring(naam, kleur, aantal);
+        Main.getKringen().add(kring);
+
+        weergaveKringToevoegen(kring);
+    }
+
+    private void weergaveKringToevoegen(Kring kring) {
         // Maak de weergave-objecten voor de nieuwe kring aan
         Label labelNaam = new Label(kring.getNaam());
         labelNaam.setFont(new Font("System Bold", 16));

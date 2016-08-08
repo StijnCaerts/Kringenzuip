@@ -9,7 +9,7 @@
       xmlns="http://javafx.com/javafx/8.0.76-ea" fx:controller="main.Controller">
     <MenuBar layoutY="-2.0" prefHeight="32.0" prefWidth="600.0">
         <Menu mnemonicParsing="false" text="Bestand">
-            <MenuItem text="CSV importeren">
+            <MenuItem text="CSV importeren" onAction="#handleImporteren">
                 <graphic>
                     <ImageView fitHeight="20" preserveRatio="true">
                         <Image url="@/media/ic_file_format_csv_add.png"/>

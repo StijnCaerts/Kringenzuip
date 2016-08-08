@@ -63,6 +63,6 @@ public class Kring {
 
     @Override
     public String toString() {
-        return '"' + getNaam() + '"' + "," + '"' + getKleur().toString() + '"' + "," + '"' + Integer.toString(getAantal()) + '"';
+        return getNaam() + "\t" + getKleur().toString() + "\t" + Integer.toString(getAantal());
     }
 }
