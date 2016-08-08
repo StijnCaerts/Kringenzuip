@@ -24,6 +24,8 @@ public class Controller {
     @FXML private GridPane gridPane;
     @FXML
     private Pane pane;
+    @FXML
+    private MenuItem exportCSV;
     private int row = 0;
 
     @FXML
@@ -85,6 +87,9 @@ public class Controller {
         Optional<Pair<String, Color>> result = dialog.showAndWait();
         result.ifPresent(kringKleur -> kringToevoegen(kringKleur.getKey(), kringKleur.getValue()));
 
+        if (exportCSV.isDisable()) {
+            exportCSV.setDisable(false);
+        }
     }
 
     @FXML

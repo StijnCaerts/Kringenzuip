@@ -16,7 +16,7 @@
                     </ImageView>
                 </graphic>
             </MenuItem>
-            <MenuItem text="Exporteren naar CSV" onAction="#handleExporteren">
+            <MenuItem text="Exporteren naar CSV" fx:id="exportCSV" onAction="#handleExporteren" disable="true">
                 <graphic>
                     <ImageView fitHeight="20" preserveRatio="true">
                         <Image url="@/media/ic_file_format_csv_save.png"/>
