@@ -17,6 +17,9 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Optional;
 
 public class Controller {
@@ -65,11 +68,11 @@ public class Controller {
         grid.add(colorPicker, 1, 1);
 
         // Enable/Disable button depending on whether a kring was entered.
-        Node loginButton = dialog.getDialogPane().lookupButton(addButtonType);
-        loginButton.setDisable(true);
+        Node addButton = dialog.getDialogPane().lookupButton(addButtonType);
+        addButton.setDisable(true);
 
         // Do some validation (using the Java 8 lambda syntax).
-        kring.textProperty().addListener((observable, oldValue, newValue) -> loginButton.setDisable(newValue.trim().isEmpty()));
+        kring.textProperty().addListener((observable, oldValue, newValue) -> addButton.setDisable(newValue.trim().isEmpty()));
 
         dialog.getDialogPane().setContent(grid);
 
@@ -106,7 +109,27 @@ public class Controller {
         File selectedFile = fileChooser.showSaveDialog(stage);
         if (selectedFile != null) {
             // write to file
-            System.out.println(selectedFile.getName());
+            PrintWriter writer;
+            try {
+                writer = new PrintWriter(selectedFile, "UTF-8");
+                writer.println("kring,kleur,aantal");
+                for (Kring kring : Main.getKringen()) {
+                    writer.println(kring.toString());
+                }
+                writer.close();
+            } catch (FileNotFoundException | UnsupportedEncodingException e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                // Get the stage
+                Stage stageAlert = (Stage) alert.getDialogPane().getScene().getWindow();
+                // Add a custom icon
+                stageAlert.getIcons().add(new Image(this.getClass().getResource("/media/ic_file_format_csv_close.png").toString()));
+
+                alert.setGraphic(new ImageView(new Image(this.getClass().getResource("/media/ic_file_format_csv_close.png").toString())));
+                alert.setTitle("Exporteren mislukt");
+                alert.setHeaderText("Problemen bij opslaan");
+                alert.setContentText("Het exporteren naar een CSV-bestand is mislukt.");
+                alert.show();
+            }
         }
     }
 
