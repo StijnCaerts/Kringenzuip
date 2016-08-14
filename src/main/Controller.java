@@ -29,6 +29,9 @@ public class Controller {
     private int row = 0;
 
     @FXML
+    private CheckMenuItem autoSave;
+
+    @FXML
     protected void handleKringToevoegen(ActionEvent event) {
         // Create the custom dialog.
         Dialog<Pair<String, Color>> dialog = new Dialog<>();

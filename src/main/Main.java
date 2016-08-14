@@ -13,9 +13,19 @@ import java.util.HashSet;
 public class Main extends Application {
 
     private static HashSet<Kring> kringen = new HashSet<>();
+    private static Stage primaryStage;
+    private static AutoSaveControl autoSaveControl = new AutoSaveControl();
 
     static HashSet<Kring> getKringen() {
         return kringen;
+    }
+
+    static Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    static AutoSaveControl getAutoSaveControl() {
+        return autoSaveControl;
     }
 
     public static void main(String[] args) {
@@ -34,5 +44,6 @@ public class Main extends Application {
         primaryStage.setOnCloseRequest(event -> Platform.exit());
 
         primaryStage.show();
+        Main.primaryStage = primaryStage;
     }
 }

@@ -42,7 +42,7 @@
         </Menu>
         <Menu mnemonicParsing="false" text="Weergave"/>
         <Menu text="Instellingen">
-            <CheckMenuItem selected="true" text="AutoSave"/>
+            <CheckMenuItem selected="true" text="AutoSave" fx:id="autoSave"/>
         </Menu>
     </MenuBar>
     <GridPane fx:id="gridPane" hgap="10.0" layoutY="30.0" vgap="20.0">
