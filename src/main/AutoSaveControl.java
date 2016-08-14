@@ -25,7 +25,7 @@ class AutoSaveControl {
         executor.setRemoveOnCancelPolicy(true);
     }
 
-    public void enable() {
+    void enable() {
         if (saveHandle == null) {
             final Runnable save = new Runnable() {
                 @Override
@@ -54,7 +54,7 @@ class AutoSaveControl {
                             } catch (IOException eIO) {
                                 // disable autosaving and display error message
                                 // TODO uncheck in GUI
-
+                                Main.getController().uncheckAutoSave();
                                 disable();
 
                                 // display error message
@@ -75,13 +75,13 @@ class AutoSaveControl {
                     }
                 }
             };
-            saveHandle = scheduler.scheduleAtFixedRate(save, 15, 15, MINUTES);
+            saveHandle = scheduler.scheduleAtFixedRate(save, 1, 5, MINUTES);
         } else {
             System.err.println("AutoSave enable called while it is already active.");
         }
     }
 
-    public void disable() {
+    void disable() {
         if (!(saveHandle == null)) {
             saveHandle.cancel(false);
             saveHandle = null;

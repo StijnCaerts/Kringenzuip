@@ -31,6 +31,10 @@ public class Controller {
     @FXML
     private CheckMenuItem autoSave;
 
+    void uncheckAutoSave() {
+        autoSave.setSelected(false);
+    }
+
     @FXML
     protected void handleKringToevoegen(ActionEvent event) {
         // Create the custom dialog.
@@ -167,6 +171,18 @@ public class Controller {
                 }
                 alert.show();
             }
+        }
+    }
+
+    @FXML
+    protected void handleAutoSave(ActionEvent event) {
+        // isSelected verandert reeds voordat de klik wordt afgehandeld
+        if (autoSave.isSelected()) {
+            // AutoSave inschakelen
+            Main.getAutoSaveControl().enable();
+        } else {
+            // AutoSave uitschakelen
+            Main.getAutoSaveControl().disable();
         }
     }
 
