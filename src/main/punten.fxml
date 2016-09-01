@@ -40,7 +40,15 @@
                 </graphic>
             </MenuItem>
         </Menu>
-        <Menu mnemonicParsing="false" text="Weergave"/>
+        <Menu mnemonicParsing="false" text="Weergave">
+            <MenuItem text="Grafiek openen" onAction="#handleGrafiekOpenen" fx:id="grafiekOpenen">
+                <graphic>
+                    <ImageView fitHeight="20" preserveRatio="true">
+                        <Image url="@/media/ic_align_horizontal_bottom.png"/>
+                    </ImageView>
+                </graphic>
+            </MenuItem>
+        </Menu>
         <Menu text="Instellingen">
             <CheckMenuItem selected="true" text="AutoSave" fx:id="autoSave" onAction="#handleAutoSave"/>
         </Menu>

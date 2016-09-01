@@ -1,10 +1,20 @@
 package main;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
+import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -12,14 +22,18 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.Pair;
 
 import java.io.*;
+import java.net.URL;
 import java.util.Optional;
+import java.util.ResourceBundle;
 
-public class Controller {
+public class Controller implements javafx.fxml.Initializable {
 
     @FXML private GridPane gridPane;
     @FXML
@@ -27,9 +41,19 @@ public class Controller {
     @FXML
     private MenuItem exportCSV;
     private int row = 0;
-
     @FXML
     private CheckMenuItem autoSave;
+    @FXML
+    private MenuItem grafiekOpenen;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        Main.setController(this);
+    }
+
+    MenuItem getGrafiekOpenen() {
+        return this.grafiekOpenen;
+    }
 
     void uncheckAutoSave() {
         autoSave.setSelected(false);
@@ -186,6 +210,11 @@ public class Controller {
         }
     }
 
+    @FXML
+    protected void handleGrafiekOpenen(ActionEvent event) {
+        initializeGrafiek(Main.getPrimaryStage());
+    }
+
     private void kringToevoegen(String naam, Color kleur) {
         // Maak een nieuwe Kring aan
         Kring kring = new Kring(naam, kleur);
@@ -229,5 +258,85 @@ public class Controller {
         gridPane.add(labelAantal, 3, row);
 
         row++;
+
+    }
+
+
+    void initializeGrafiek(Window owner) {
+        Stage stage = new Stage();
+        stage.setTitle("Kringenzuip");
+        stage.initOwner(owner);
+        stage.getIcons().add(new Image(this.getClass().getResource("/media/flat_beer.png").toString()));
+        Main.setGrafiek(stage);
+        getGrafiekOpenen().setDisable(true);
+        stage.setOnCloseRequest(event -> {
+            Main.setGrafiek(null);
+            Main.setSeries(null);
+            getGrafiekOpenen().setDisable(false);
+        });
+
+        final CategoryAxis xAxis = new CategoryAxis();
+        final NumberAxis yAxis = new NumberAxis();
+        final BarChart<String, Number> barChart = new BarChart<String, Number>(xAxis, yAxis);
+        barChart.setLegendVisible(false);
+
+        XYChart.Series series = new XYChart.Series();
+        Main.setSeries(series);
+
+        for (Kring kring : Main.getKringen()) {
+            final XYChart.Data<String, Number> data = new XYChart.Data(kring.getNaam(), kring.getAantal());
+            data.nodeProperty().addListener(new ChangeListener<Node>() {
+                @Override
+                public void changed(ObservableValue<? extends Node> ov, Node oldNode, final Node node) {
+                    if (node != null) {
+                        setNodeStyle(data, kring);
+                        displayLabelForData(data);
+                    }
+                }
+            });
+            series.getData().add(data);
+        }
+
+        Scene scene = new Scene(barChart, 800, 600);
+        barChart.getData().add(series);
+        stage.setScene(scene);
+
+        stage.show();
+    }
+
+    private void setNodeStyle(XYChart.Data<String, Number> data, Kring kring) {
+        Node node = data.getNode();
+        node.setStyle("-fx-bar-fill: #" + kring.getKleur().toString().substring(2, 8) + ";");
+    }
+
+    /**
+     * places a text label with a bar's value above a bar node for a given XYChart.Data
+     */
+    private void displayLabelForData(XYChart.Data<String, Number> data) {
+        final Node node = data.getNode();
+        final Text dataText = new Text(data.getYValue() + "");
+        node.parentProperty().addListener(new ChangeListener<Parent>() {
+            @Override
+            public void changed(ObservableValue<? extends Parent> ov, Parent oldParent, Parent parent) {
+                Group parentGroup = (Group) parent;
+                parentGroup.getChildren().add(dataText);
+            }
+        });
+
+        node.boundsInParentProperty().addListener(new ChangeListener<Bounds>() {
+            @Override
+            public void changed(ObservableValue<? extends Bounds> ov, Bounds oldBounds, Bounds bounds) {
+                dataText.setLayoutX(
+                        Math.round(
+                                bounds.getMinX() + bounds.getWidth() / 2 - dataText.prefWidth(-1) / 2
+                        )
+                );
+                dataText.setLayoutY(
+                        Math.round(
+                                bounds.getMinY() - dataText.prefHeight(-1) * 0.5
+                        )
+                );
+            }
+        });
     }
 }
