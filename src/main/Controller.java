@@ -3,6 +3,8 @@ package main;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
@@ -212,7 +214,7 @@ public class Controller implements javafx.fxml.Initializable {
 
     @FXML
     protected void handleGrafiekOpenen(ActionEvent event) {
-        initializeGrafiek(Main.getPrimaryStage());
+        initializeGrafiek(null);
     }
 
     private void kringToevoegen(String naam, Color kleur) {
@@ -277,13 +279,13 @@ public class Controller implements javafx.fxml.Initializable {
 
         final CategoryAxis xAxis = new CategoryAxis();
         final NumberAxis yAxis = new NumberAxis();
-        final BarChart<String, Number> barChart = new BarChart<String, Number>(xAxis, yAxis);
+        final BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
         barChart.setLegendVisible(false);
 
         XYChart.Series series = new XYChart.Series();
         Main.setSeries(series);
 
-        for (Kring kring : Main.getKringen()) {
+        /*for (Kring kring : Main.getKringen()) {
             final XYChart.Data<String, Number> data = new XYChart.Data(kring.getNaam(), kring.getAantal());
             data.nodeProperty().addListener(new ChangeListener<Node>() {
                 @Override
@@ -295,10 +297,10 @@ public class Controller implements javafx.fxml.Initializable {
                 }
             });
             series.getData().add(data);
-        }
+        }*/
 
         Scene scene = new Scene(barChart, 800, 600);
-        barChart.getData().add(series);
+        barChart.setData(getChartData());
         stage.setScene(scene);
 
         stage.show();
@@ -338,5 +340,27 @@ public class Controller implements javafx.fxml.Initializable {
                 );
             }
         });
+    }
+
+    private ObservableList<XYChart.Series<String, Number>> getChartData() {
+        ObservableList<XYChart.Series<String, Number>> answer = FXCollections.observableArrayList();
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+
+        for (Kring kring : Main.getKringen()) {
+            final XYChart.Data<String, Number> data = new XYChart.Data(kring.getNaam(), kring.getAantal());
+            data.nodeProperty().addListener(new ChangeListener<Node>() {
+                @Override
+                public void changed(ObservableValue<? extends Node> ov, Node oldNode, final Node node) {
+                    if (node != null) {
+                        setNodeStyle(data, kring);
+                        displayLabelForData(data);
+                    }
+                }
+            });
+            series.getData().add(data);
+        }
+
+        answer.add(series);
+        return answer;
     }
 }
