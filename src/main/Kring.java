@@ -1,5 +1,7 @@
 package main;
 
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.scene.chart.XYChart;
 import javafx.scene.paint.Color;
 
 /**
@@ -10,12 +12,20 @@ import javafx.scene.paint.Color;
 
 public class Kring {
     private String naam;
-    private int aantal;
+    private SimpleIntegerProperty aantal;
     private Color kleur;
+
+    private XYChart.Data<String, Number> dataRef = null;
 
     public Kring (String naam, Color kleur) {
         setNaam(naam);
-        setAantal(0);
+        aantal = new SimpleIntegerProperty(0);
+
+        // update Y-value on graph when aantal is changed
+        aantal.addListener((observable, oldValue, newValue) -> {
+                    if (null != dataRef) dataRef.setYValue(newValue);
+        });
+
         setKleur(kleur);
     }
 
@@ -34,11 +44,11 @@ public class Kring {
     }
 
     int getAantal() {
-        return aantal;
+        return aantal.getValue();
     }
 
     private void setAantal(int aantal) {
-        this.aantal = aantal;
+        this.aantal.setValue(aantal);
     }
 
     void verhoogAantal() {
@@ -59,6 +69,10 @@ public class Kring {
 
     private void setKleur(Color kleur) {
         this.kleur = kleur;
+    }
+
+    void setDataRef(XYChart.Data<String, Number> data) {
+        dataRef = data;
     }
 
     @Override
