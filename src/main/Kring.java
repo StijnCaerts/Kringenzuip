@@ -55,6 +55,10 @@ public class Kring {
         setAantal(getAantal() + 1);
     }
 
+    void verhoogAantalMetVijf() {
+        setAantal(getAantal() + 5);
+    }
+
     void verlaagAantal() {
         if (getAantal() > 0) {
             setAantal(getAantal() - 1);

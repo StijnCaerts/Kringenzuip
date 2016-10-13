@@ -248,6 +248,13 @@ public class Controller implements javafx.fxml.Initializable {
             labelAantal.setText(Integer.toString(kring.getAantal()));
         });
 
+        Button buttonPlus5 = new Button("+5");
+        buttonPlus5.setFont(new Font(16));
+        buttonPlus5.setOnAction((ActionEvent e) -> {
+            kring.verhoogAantalMetVijf();
+            labelAantal.setText(Integer.toString(kring.getAantal()));
+        });
+
         Button buttonMin = new Button("-");
         buttonMin.setOnAction((ActionEvent e) -> {
             kring.verlaagAantal();
@@ -257,7 +264,8 @@ public class Controller implements javafx.fxml.Initializable {
         gridPane.add(labelNaam,0, row);
         gridPane.add(buttonMin, 1, row);
         gridPane.add(buttonPlus, 2, row);
-        gridPane.add(labelAantal, 3, row);
+        gridPane.add(buttonPlus5, 3, row);
+        gridPane.add(labelAantal, 4, row);
 
         row++;
 
