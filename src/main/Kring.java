@@ -18,20 +18,18 @@ public class Kring {
     private XYChart.Data<String, Number> dataRef = null;
 
     public Kring (String naam, Color kleur) {
+        this(naam, kleur, 0);
+    }
+
+    public Kring(String naam, Color kleur, int initAantal) {
         setNaam(naam);
-        aantal = new SimpleIntegerProperty(0);
+        this.aantal = new SimpleIntegerProperty(initAantal);
 
         // update Y-value on graph when aantal is changed
         aantal.addListener((observable, oldValue, newValue) -> {
-                    if (null != dataRef) dataRef.setYValue(newValue);
+            if (null != dataRef) dataRef.setYValue(newValue);
         });
 
-        setKleur(kleur);
-    }
-
-    public Kring(String naam, Color kleur, int aantal) {
-        setNaam(naam);
-        setAantal(aantal);
         setKleur(kleur);
     }
 

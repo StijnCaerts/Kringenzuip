@@ -53,7 +53,7 @@ public class Controller implements javafx.fxml.Initializable {
         Main.setController(this);
     }
 
-    MenuItem getGrafiekOpenen() {
+    private MenuItem getGrafiekOpenen() {
         return this.grafiekOpenen;
     }
 
@@ -218,11 +218,7 @@ public class Controller implements javafx.fxml.Initializable {
     }
 
     private void kringToevoegen(String naam, Color kleur) {
-        // Maak een nieuwe Kring aan
-        Kring kring = new Kring(naam, kleur);
-        Main.getKringen().add(kring);
-
-        weergaveKringToevoegen(kring);
+        kringToevoegen(naam, kleur, 0);
     }
 
     private void kringToevoegen(String naam, Color kleur, int aantal) {
@@ -268,6 +264,21 @@ public class Controller implements javafx.fxml.Initializable {
         gridPane.add(labelAantal, 4, row);
 
         row++;
+
+        if (Main.getGrafiek() != null) {
+            final XYChart.Data<String, Number> data = new XYChart.Data(kring.getNaam(), kring.getAantal());
+            kring.setDataRef(data);
+            data.nodeProperty().addListener(new ChangeListener<Node>() {
+                @Override
+                public void changed(ObservableValue<? extends Node> ov, Node oldNode, final Node node) {
+                    if (node != null) {
+                        setNodeStyle(data, kring);
+                        displayLabelForData(data);
+                    }
+                }
+            });
+            Main.getSeries().getData().add(data);
+        }
 
     }
 
@@ -364,6 +375,7 @@ public class Controller implements javafx.fxml.Initializable {
     private ObservableList<XYChart.Series<String, Number>> getChartData() {
         ObservableList<XYChart.Series<String, Number>> answer = FXCollections.observableArrayList();
         XYChart.Series<String, Number> series = new XYChart.Series<>();
+        Main.setSeries(series);
 
         for (Kring kring : Main.getKringen()) {
             final XYChart.Data<String, Number> data = new XYChart.Data(kring.getNaam(), kring.getAantal());
