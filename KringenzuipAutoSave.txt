@@ -1,0 +1,2 @@
+kring	kleur	aantal
+Wina	0xcc6633ff	3

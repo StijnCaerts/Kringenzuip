@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<Pane xmlns:fx="http://javafx.com/fxml/1" fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+      minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0"
+      xmlns="http://javafx.com/javafx/8.0.76-ea" fx:controller="main.Controller">
+    <MenuBar layoutY="-2.0" prefHeight="32.0" prefWidth="600.0">
+        <Menu mnemonicParsing="false" text="Bestand">
+            <MenuItem text="CSV importeren" onAction="#handleImporteren">
+                <graphic>
+                    <ImageView fitHeight="20" preserveRatio="true">
+                        <Image url="@/media/ic_file_format_csv_add.png"/>
+                    </ImageView>
+                </graphic>
+            </MenuItem>
+            <MenuItem text="Exporteren naar CSV" fx:id="exportCSV" onAction="#handleExporteren" disable="true">
+                <graphic>
+                    <ImageView fitHeight="20" preserveRatio="true">
+                        <Image url="@/media/ic_file_format_csv_save.png"/>
+                    </ImageView>
+                </graphic>
+            </MenuItem>
+            <MenuItem mnemonicParsing="false" text="Sluiten" onAction="#handleSluiten">
+                <graphic>
+                    <ImageView fitHeight="20" preserveRatio="true">
+                        <Image url="@/media/ic_close.png"/>
+                    </ImageView>
+                </graphic>
+            </MenuItem>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Kringen">
+            <MenuItem mnemonicParsing="false" onAction="#handleKringToevoegen" text="Kring toevoegen">
+                <graphic>
+                    <ImageView fitHeight="20" preserveRatio="true">
+                        <Image url="@/media/ic_group_add.png"/>
+                    </ImageView>
+                </graphic>
+            </MenuItem>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Weergave">
+            <MenuItem text="Grafiek openen" onAction="#handleGrafiekOpenen" fx:id="grafiekOpenen">
+                <graphic>
+                    <ImageView fitHeight="20" preserveRatio="true">
+                        <Image url="@/media/ic_align_horizontal_bottom.png"/>
+                    </ImageView>
+                </graphic>
+            </MenuItem>
+        </Menu>
+        <Menu text="Instellingen">
+            <CheckMenuItem selected="true" text="AutoSave" fx:id="autoSave" onAction="#handleAutoSave"/>
+        </Menu>
+    </MenuBar>
+    <GridPane fx:id="gridPane" hgap="10.0" layoutY="30.0" vgap="20.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="135.0" minWidth="10.0" prefWidth="124.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="113.0" minWidth="10.0" prefWidth="32.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="10.0" prefWidth="50.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="243.0" minWidth="10.0" prefWidth="238.0"/>
+
+        </columnConstraints>
+        <padding>
+            <Insets bottom="32.0" left="32.0" right="32.0" top="32.0"/>
+        </padding>
+    </GridPane>
+</Pane>
