@@ -272,6 +272,9 @@ public class Controller implements javafx.fxml.Initializable {
         Main.setGrafiek(stage);
         getGrafiekOpenen().setDisable(true);
         stage.setOnCloseRequest(event -> {
+            for (Kring kring : Main.getKringen()) {
+                kring.setDataRef(null);
+            }
             Main.setGrafiek(null);
             Main.setSeries(null);
             getGrafiekOpenen().setDisable(false);
@@ -316,7 +319,15 @@ public class Controller implements javafx.fxml.Initializable {
      */
     private void displayLabelForData(XYChart.Data<String, Number> data) {
         final Node node = data.getNode();
-        final Text dataText = new Text(data.getYValue() + "");
+
+        final Text dataText = new Text(Integer.toString(data.getYValue().intValue()));
+
+        // update label when Y value changes
+        // why is it initially displaying as a float now?
+        data.YValueProperty().addListener((ov, oldValue, newValue) ->
+            dataText.setText(Integer.toString(data.getYValue().intValue()))
+        );
+
         node.parentProperty().addListener(new ChangeListener<Parent>() {
             @Override
             public void changed(ObservableValue<? extends Parent> ov, Parent oldParent, Parent parent) {
@@ -348,6 +359,7 @@ public class Controller implements javafx.fxml.Initializable {
 
         for (Kring kring : Main.getKringen()) {
             final XYChart.Data<String, Number> data = new XYChart.Data(kring.getNaam(), kring.getAantal());
+            kring.setDataRef(data);
             data.nodeProperty().addListener(new ChangeListener<Node>() {
                 @Override
                 public void changed(ObservableValue<? extends Node> ov, Node oldNode, final Node node) {
