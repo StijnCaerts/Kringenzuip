@@ -1,17 +1,13 @@
 package main;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
@@ -29,6 +25,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Pair;
+import javafx.util.StringConverter;
 
 import java.io.*;
 import java.net.URL;
@@ -193,7 +190,8 @@ public class Controller implements javafx.fxml.Initializable {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 if (e.getClass() == IllegalArgumentException.class) {
                     // bestand voldoet niet aan de verwachte indeling.
-                    System.out.println("kaka");
+                    alert.setHeaderText("Problemen bij importeren");
+                    alert.setContentText("Het importeren van het CSV-bestand is mislukt.");
                 }
                 alert.show();
             }
@@ -223,10 +221,25 @@ public class Controller implements javafx.fxml.Initializable {
 
     private void kringToevoegen(String naam, Color kleur, int aantal) {
         // Maak een nieuwe Kring aan
-        Kring kring = new Kring(naam, kleur, aantal);
-        Main.getKringen().add(kring);
+        if (Main.kringAlreadyExists(naam)) {
+            // show error window
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            // Get the stage
+            Stage stageAlert = (Stage) alert.getDialogPane().getScene().getWindow();
+            // Add a custom icon
+            stageAlert.getIcons().add(new Image(this.getClass().getResource("/media/ic_group_warning.png").toString()));
 
-        weergaveKringToevoegen(kring);
+            alert.setGraphic(new ImageView(new Image(this.getClass().getResource("/media/ic_group_warning.png").toString())));
+            alert.setTitle("Toevoegen mislukt");
+            alert.setHeaderText("Toevoegen van kring mislukt");
+            alert.setContentText("Het toevoegen van de kring '" + naam + "' is mislukt, omdat er al een kring bestaat met deze naam.");
+            alert.show();
+        } else {
+            Kring kring = new Kring(naam, kleur, aantal);
+            Main.getKringen().add(kring);
+
+            weergaveKringToevoegen(kring);
+        }
     }
 
     private void weergaveKringToevoegen(Kring kring) {
@@ -268,13 +281,10 @@ public class Controller implements javafx.fxml.Initializable {
         if (Main.getGrafiek() != null) {
             final XYChart.Data<String, Number> data = new XYChart.Data(kring.getNaam(), kring.getAantal());
             kring.setDataRef(data);
-            data.nodeProperty().addListener(new ChangeListener<Node>() {
-                @Override
-                public void changed(ObservableValue<? extends Node> ov, Node oldNode, final Node node) {
-                    if (node != null) {
-                        setNodeStyle(data, kring);
-                        displayLabelForData(data);
-                    }
+            data.nodeProperty().addListener((ov, oldNode, node) -> {
+                if (node != null) {
+                    setNodeStyle(data, kring);
+                    displayLabelForData(data);
                 }
             });
             Main.getSeries().getData().add(data);
@@ -301,25 +311,30 @@ public class Controller implements javafx.fxml.Initializable {
 
         final CategoryAxis xAxis = new CategoryAxis();
         final NumberAxis yAxis = new NumberAxis();
+
+        class IntegerStringConverter extends StringConverter<Number> {
+            private IntegerStringConverter() {
+            }
+
+            @Override
+            public String toString(Number object) {
+                if (object.intValue() != object.doubleValue()) return "";
+                return "" + (object.intValue());
+            }
+
+            @Override
+            public Number fromString(String string) {
+                Number val = Double.parseDouble(string);
+                return val.intValue();
+            }
+        }
+
+        yAxis.setTickLabelFormatter(new IntegerStringConverter());
         final BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
         barChart.setLegendVisible(false);
 
         XYChart.Series series = new XYChart.Series();
         Main.setSeries(series);
-
-        /*for (Kring kring : Main.getKringen()) {
-            final XYChart.Data<String, Number> data = new XYChart.Data(kring.getNaam(), kring.getAantal());
-            data.nodeProperty().addListener(new ChangeListener<Node>() {
-                @Override
-                public void changed(ObservableValue<? extends Node> ov, Node oldNode, final Node node) {
-                    if (node != null) {
-                        setNodeStyle(data, kring);
-                        displayLabelForData(data);
-                    }
-                }
-            });
-            series.getData().add(data);
-        }*/
 
         Scene scene = new Scene(barChart, 800, 600);
         barChart.setData(getChartData());
@@ -347,28 +362,22 @@ public class Controller implements javafx.fxml.Initializable {
             dataText.setText(Integer.toString(data.getYValue().intValue()))
         );
 
-        node.parentProperty().addListener(new ChangeListener<Parent>() {
-            @Override
-            public void changed(ObservableValue<? extends Parent> ov, Parent oldParent, Parent parent) {
-                Group parentGroup = (Group) parent;
-                parentGroup.getChildren().add(dataText);
-            }
+        node.parentProperty().addListener((ov, oldParent, parent) -> {
+            Group parentGroup = (Group) parent;
+            parentGroup.getChildren().add(dataText);
         });
 
-        node.boundsInParentProperty().addListener(new ChangeListener<Bounds>() {
-            @Override
-            public void changed(ObservableValue<? extends Bounds> ov, Bounds oldBounds, Bounds bounds) {
-                dataText.setLayoutX(
-                        Math.round(
-                                bounds.getMinX() + bounds.getWidth() / 2 - dataText.prefWidth(-1) / 2
-                        )
-                );
-                dataText.setLayoutY(
-                        Math.round(
-                                bounds.getMinY() - dataText.prefHeight(-1) * 0.5
-                        )
-                );
-            }
+        node.boundsInParentProperty().addListener((ov, oldBounds, bounds) -> {
+            dataText.setLayoutX(
+                    Math.round(
+                            bounds.getMinX() + bounds.getWidth() / 2 - dataText.prefWidth(-1) / 2
+                    )
+            );
+            dataText.setLayoutY(
+                    Math.round(
+                            bounds.getMinY() - dataText.prefHeight(-1) * 0.5
+                    )
+            );
         });
     }
 
@@ -380,13 +389,10 @@ public class Controller implements javafx.fxml.Initializable {
         for (Kring kring : Main.getKringen()) {
             final XYChart.Data<String, Number> data = new XYChart.Data(kring.getNaam(), kring.getAantal());
             kring.setDataRef(data);
-            data.nodeProperty().addListener(new ChangeListener<Node>() {
-                @Override
-                public void changed(ObservableValue<? extends Node> ov, Node oldNode, final Node node) {
-                    if (node != null) {
-                        setNodeStyle(data, kring);
-                        displayLabelForData(data);
-                    }
+            data.nodeProperty().addListener((ov, oldNode, node) -> {
+                if (node != null) {
+                    setNodeStyle(data, kring);
+                    displayLabelForData(data);
                 }
             });
             series.getData().add(data);

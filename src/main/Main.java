@@ -24,6 +24,16 @@ public class Main extends Application {
         return kringen;
     }
 
+    static boolean kringAlreadyExists(String naam) {
+        HashSet<Kring> kringen = getKringen();
+        for (Kring kring : kringen) {
+            if (kring.getNaam().equals(naam)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     static Stage getPrimaryStage() {
         return primaryStage;
     }
