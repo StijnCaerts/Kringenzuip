@@ -33,7 +33,7 @@ class AutoSaveControl {
                     if (Main.getKringen().size() > 0) {
                         // perform save
                         PrintWriter writer;
-                        String outputPath = "./KringenzuipAutoSave.txt";
+                        String outputPath = "./KringenzuipAutoSave.csv";
                         try {
                             writer = new PrintWriter(outputPath, "UTF-8");
                             writer.println("kring\tkleur\taantal");

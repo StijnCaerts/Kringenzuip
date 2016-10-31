@@ -52,6 +52,9 @@
         <Menu text="Instellingen">
             <CheckMenuItem selected="true" text="AutoSave" fx:id="autoSave" onAction="#handleAutoSave"/>
         </Menu>
+        <Menu text="Help">
+            <MenuItem text="Over" onAction="#handleOver"/>
+        </Menu>
     </MenuBar>
     <GridPane fx:id="gridPane" hgap="10.0" layoutY="30.0" vgap="20.0">
         <columnConstraints>

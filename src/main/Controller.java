@@ -215,6 +215,19 @@ public class Controller implements javafx.fxml.Initializable {
         initializeGrafiek(null);
     }
 
+    @FXML
+    protected void handleOver(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        Stage stageAlert = (Stage) alert.getDialogPane().getScene().getWindow();
+        stageAlert.getIcons().add(new Image(this.getClass().getResource("/media/ic_layout.png").toString()));
+        alert.setTitle("Over");
+        alert.setHeaderText("Over");
+        alert.setGraphic(new ImageView(new Image(this.getClass().getResource("/media/ic_layout.png").toString())));
+        alert.setContentText("");
+
+        alert.show();
+    }
+
     private void kringToevoegen(String naam, Color kleur) {
         kringToevoegen(naam, kleur, 0);
     }
